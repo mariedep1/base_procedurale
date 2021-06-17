@@ -1,31 +1,20 @@
 <?php 
 
-// moteur: mysql hote: localhost db:garages user:garage mdp: garage
+//on récupère les librairies nécessaires
 
-$user = "garage";
-$password = "garage"; 
+require_once "core/database.php";
+require_once "core/utils.php";
 
-$myConnection = new PDO('mysql:host=localhost;dbname=garages', $user, $password, [ 
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
-] );
 
-//on récupère les garages
-$resultat = $myConnection ->query('SELECT * FROM garages'); 
-$garages = $resultat->fetchAll();
 
+//on récupère tous les garages
+$garages = findAllGarages(); 
+
+
+//on fixe le titre de la page
 $titreDeLaPage = "Garages"; 
 
 
-//on active la mémoire tampon 
-
-ob_start();
-
-require_once "templates/garages/garages.html.php";
-
-//on stoppe la mémoire tampon
-
-$contenuDeLaPage = ob_get_clean();
-
-
-require_once "templates/layout.html.php";
+//on affiche
+render("garages/garages", 
+        compact('garages', 'titreDeLaPage')); 

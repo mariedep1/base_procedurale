@@ -1,5 +1,9 @@
 <?php
+//on récupère les librairies nécessaires
+require_once "core/database.php";
+require_once "core/utils.php";
 
+//on initialise les variables
 $annonceName = null; 
 $annoncePrice = null; 
 $garageId = null; 
@@ -21,27 +25,18 @@ if( !$garageId || !$annonceName || !$annoncePrice ){
     
 }
 
-$user = "garage";
-$password = "garage"; 
-$pdo = new PDO('mysql:host=localhost;dbname=garages', $user, $password, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
-]);
 
-$maRequete = $pdo->prepare('SELECT * FROM garages WHERE id = :garage_id');
-$maRequete ->execute(array('garage_id'=>$garageId));
-$garage = $maRequete->fetch();
+
+//on trouve un garage
+$garage = findGarageById($garageId);
 
 //si le garage n'existe pas 
 if(!$garage){
      die("ce garage n'existe pas");
 }
-                               
-$maRequeteSaveAnnonce = $pdo->prepare("INSERT INTO annonces(name, price, garage_id) VALUES (:nom, :prix, :garage_id)");
-$maRequeteSaveAnnonce ->execute(['nom'=>$annonceName, 
-                    'prix'=>$annoncePrice,
-                    'garage_id'=>$garageId]);
 
-header("Location: garage.php?id=$garageId");
+//on crée une annonce
+insertAnnonce($annonceName, $annoncePrice, $garageId);
+
+redirect("garage.php?id=".$garageId);
  
